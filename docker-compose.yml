@@ -3,8 +3,8 @@ version: "3.1"
 services:
 
   mysqldb:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
+    image: mysql:latest
+    command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     container_name: mysqldb
     restart: always
     tty: true
@@ -33,6 +33,7 @@ services:
       - node-network
     volumes:
       - ./node:/usr/src/app
+      - /usr/src/app/node_modules
     tty: true
     ports:
       - "3000:3000"
@@ -51,6 +52,8 @@ services:
     restart: always
     ports:
         - "8080:80"
+    depends_on:
+      - mysqldb
 
 networks:
   node-network:

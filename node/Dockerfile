@@ -2,9 +2,11 @@ FROM node:slim
 
 WORKDIR /usr/src/app
 
-COPY package*.json index.js ./
+COPY . .
 
 RUN npm install
+
+COPY . .
 
 EXPOSE 3000
 

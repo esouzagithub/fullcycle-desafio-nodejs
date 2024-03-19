@@ -1,4 +1,4 @@
-# fullcycle desafio go
+# fullcycle desafio nodejs
 Nesse projeto iremos usar o banco de dados mysql, criaremos uma aplicação em nodejs e o nginx com proxy reverso.
 
 

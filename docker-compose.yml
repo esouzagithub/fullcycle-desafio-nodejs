@@ -1,0 +1,57 @@
+version: "3.1"
+
+services:
+
+  mysqldb:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysqldb
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - node-network
+    ports:
+      - "3318:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+  nodeserver:
+    build:
+      context: ./node
+      dockerfile: Dockerfile
+    image: esouza/fullcycle-node
+    container_name: nodeserver
+    networks:
+      - node-network
+    volumes:
+      - ./node:/usr/src/app
+    tty: true
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysqldb:
+        condition: service_healthy      
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: esouza/nginx
+    container_name: nginx
+    networks: 
+      - node-network
+    restart: always
+    ports:
+        - "8080:80"
+
+networks:
+  node-network:
+    driver: bridge
